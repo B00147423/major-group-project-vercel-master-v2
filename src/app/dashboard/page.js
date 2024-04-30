@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 import '../css/dashboard.css';
 import Layout from '../Components/Layout';
 import Header from '../Components/Header';
-import Link from 'next/link';
+
+
+
 
 export default function Dashboard() {
   const router = useRouter();
   const [modules, setModules] = useState([]);
-  const [generalModules, setGeneralModules] = useState([]); // State to store general modules
+  const [generalModules, setGeneralModules] = useState([]);
   const [username, setUsername] = useState('');
   const [userYear, setUserYear] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -60,7 +62,7 @@ export default function Dashboard() {
       router.replace('/login');
     } else {
       fetchModules();
-      fetchGeneralModules(); // Fetch general modules
+      fetchGeneralModules();
     }
   }, [router]);
 
@@ -80,7 +82,6 @@ export default function Dashboard() {
     );
   
     if (isModuleAlreadyAdded) {
-      // Module is already added, handle this case (e.g., show a message to the user)
       console.log('Module is already added to the dashboard');
       return;
     }
@@ -89,6 +90,7 @@ export default function Dashboard() {
     const updatedModule = [...dashboardModules, module];
     setDashboardModules(updatedModule);
     localStorage.setItem(dashboardModulesKey, JSON.stringify(updatedModule));
+    refreshPopup(); // Refresh the popup after adding a module
   };
 
   const handleRemoveModule = (moduleToRemove) => {
@@ -97,6 +99,7 @@ export default function Dashboard() {
     const updatedModule = dashboardModules.filter(module => module._id !== moduleToRemove._id);
     setDashboardModules(updatedModule);
     localStorage.setItem(dashboardModulesKey, JSON.stringify(updatedModule));
+    refreshPopup(); // Refresh the popup after removing a module
   };
 
   const handleModuleClick = (moduleId) => {
@@ -109,7 +112,11 @@ export default function Dashboard() {
     router.push(`/modules/${moduleId}`);
   };
   
-  
+  // Function to refresh the popup
+  const refreshPopup = () => {
+    setShowModulesPopup(true);
+  };
+
   return (
     <Layout setSearchResults={setSearchResults}>
       <Header setSearchResults={setSearchResults} />
@@ -176,71 +183,9 @@ export default function Dashboard() {
           </section>
         </div>
       </div>
-      <div className="banner">
-        <center><h1>Activities on Campus</h1></center>
-      </div>
-      <div className="main-container">
-        <div className="dashboard-container">
-          <section className="main-content">
-            <div className="side-bar left">
-              <center><h2>General Forums</h2></center>
-                {/* Display fetched general modules */}
-                  {generalModules.map((module) => (
-                    <div key={module._id}>
-                      <div className='module'>
-                        <center>
-                        <h3>{module.title}</h3>
-                        <p>{module.code} - {module.year}</p>
-                        <p>{module.description}</p>
-                        <br/>
-                        <button onClick={() => handleModuleClick(module._id)}>See Module</button>
-                        </center>
-                      </div>
-                    </div>
-                  ))}
-            </div>
-            <div className="side-bar right">
-            <center><h2>Your home for everything happening around Campus!</h2></center>
-              <br/>
-              <center><bold><h3>To see what's going on, click on any Programme to learn more and engage with
-                other students.
-              </h3></bold></center>
-              <br/>
-              <center><bold><h3>Finding campus life stressful? Seeking a balance between your coursework and
-                campus social life? You're in luck! The following programmes provide a way of connecting with other
-                students to achieve the most out of your campus life. 
-              </h3></bold></center>
-              <br/>
-              <center><bold><h3>Each programme provides a way of getting the most out of your campus life, whether
-                this be through mentoring others, having your voice be heard as part of your College Student Union
-                or simply by engaging with any Societes present around campus. The Sky's the limit!
-              </h3></bold></center>
-            </div>
-          </section>
-        </div>
-      </div>
-      <div className="banner">
-        <center><h1>Find A Post</h1></center>
-      </div>
-      <div className="main-container">
-        <div className="dashboard-container">
-          <section className="main-content">
-            <div className="side-bar left">
-            <center><h3>Search Results:</h3></center>
-              {searchResults.map((result, i) => (
-                <div key={result._id}>
-                  <div className='module'>
-                  <h3>{result.title}</h3>
-                  <p>{result.content}</p>
-                  <small>Posted by: {result.poster} on {result.timestamp}</small>
-                  <button onClick={() => handleResultsClick(result.moduleId)}>Go to</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-      </div>
+      <style jsx>{`
+        // Your CSS styles
+      `}</style>
     </Layout>
   );
 }
